@@ -1,0 +1,25 @@
+{
+  "RiemannURI": "tcp://127.0.0.1:5555",
+  "Metrics": [
+    {
+      "RatePerMinute": 1.0,
+      "Event": {
+        "Service": "ExampleGauge",
+        "Metric": 100.0,
+        "Attributes": {
+          "metric_type": "Gauge"
+        }
+      }
+    },
+    {
+      "RatePerMinute": 30.0,
+      "Event": {
+        "Service": "ExampleCounter",
+        "Metric": 1,
+        "Attributes": {
+          "metric_type": "Counter"
+        }
+      }
+    }
+  ]
+}

@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/davecgh/go-spew/spew"
 	"github.com/golang/glog"
 	riemanngo "github.com/riemann/riemann-go-client"
 )
@@ -18,6 +19,7 @@ func main() {
 	flag.Parse()
 	flag.Lookup("logtostderr").Value.Set("true")
 	config := GetConfig(configPath)
+	glog.Info(spew.Sdump(config))
 
 	var wg sync.WaitGroup
 	for _, metric := range config.Metrics {

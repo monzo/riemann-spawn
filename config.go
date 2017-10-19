@@ -39,7 +39,7 @@ func (c Configuration) GenerateClient() riemanngo.Client {
 	case "tcp":
 		return riemanngo.NewTcpClient(fmt.Sprintf("%s:%s", url.Hostname(), url.Port()))
 	default:
-		glog.Fatalf("RiemannURI must be either TCP or UDP schemed: %s", c.RiemannURI)
+		glog.Fatalf("RiemannURI must be either tcp or udp schemed: %s", c.RiemannURI)
 		return nil
 	}
 }
@@ -63,7 +63,9 @@ func GetConfig(filepath string) Configuration {
 		if err != nil {
 			glog.Fatalf("Couldn't Load Condifuration: %s", err)
 		}
+		glog.Infof("Processed Configuration From File: %s", filepath)
 		return config
 	}
+	glog.Warning("Using Default Configuration")
 	return DefaultConfig()
 }
