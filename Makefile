@@ -14,6 +14,7 @@ help: ## This help.
 # DOCKER TASKS
 # Build the container
 compile: ## Compile a static binary suitable for the scratch docker container
+	go get
 	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o riemann-spawn .
 
 dockerBuild: compile  ## Build the container
