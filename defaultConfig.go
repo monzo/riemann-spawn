@@ -12,6 +12,7 @@ func DefaultConfig() Configuration {
 				Event: riemanngo.Event{
 					Service:    "ExampleCounter",
 					Host:       "ExampleHost",
+					Metric:     1,
 					Attributes: map[string]string{"metric_type": "Counter"},
 				},
 				RatePerMinute: 60},
@@ -20,6 +21,7 @@ func DefaultConfig() Configuration {
 				Event: riemanngo.Event{
 					Service:    "ExampleGauge",
 					Host:       "ExampleHost",
+					Metric:     100.49,
 					Attributes: map[string]string{"metric_type": "Gauge"},
 				},
 				RatePerMinute: 10},

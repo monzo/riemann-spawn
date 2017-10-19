@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io/ioutil"
+	"time"
 
 	"github.com/golang/glog"
 	"github.com/riemann/riemann-go-client"
@@ -11,13 +12,17 @@ import (
 // MetricDefinition models a repeating metric
 type MetricDefinition struct {
 	Event         riemanngo.Event
-	RatePerMinute int
+	RatePerMinute float64
+}
+
+func (m MetricDefinition) repeatDuration() time.Duration {
+	return time.Duration(float64(time.Minute) / m.RatePerMinute)
 }
 
 // Configuration Format
 type Configuration struct {
-	RiemannHost string `json:"riemann-host"`
-	RiemannPort int    `json:"riemann-port"`
+	RiemannHost string
+	RiemannPort int
 	Metrics     []MetricDefinition
 }
 
