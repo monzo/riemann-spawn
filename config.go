@@ -2,8 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"time"
+
+	"net/url"
 
 	"github.com/golang/glog"
 	"github.com/riemann/riemann-go-client"
@@ -15,15 +18,30 @@ type MetricDefinition struct {
 	RatePerMinute float64
 }
 
-func (m MetricDefinition) repeatDuration() time.Duration {
+func (m MetricDefinition) RepeatDuration() time.Duration {
 	return time.Duration(float64(time.Minute) / m.RatePerMinute)
 }
 
 // Configuration Format
 type Configuration struct {
-	RiemannHost string
-	RiemannPort int
-	Metrics     []MetricDefinition
+	RiemannURI string
+	Metrics    []MetricDefinition
+}
+
+func (c Configuration) GenerateClient() riemanngo.Client {
+	url, err := url.Parse(c.RiemannURI)
+	if err != nil {
+		glog.Fatalf("Couldn't parse RiemannURI: %s", c.RiemannURI)
+	}
+	switch url.Scheme {
+	case "udp":
+		return riemanngo.NewUdpClient(fmt.Sprintf("%s:%s", url.Hostname(), url.Port()))
+	case "tcp":
+		return riemanngo.NewTcpClient(fmt.Sprintf("%s:%s", url.Hostname(), url.Port()))
+	default:
+		glog.Fatalf("RiemannURI must be either TCP or UDP schemed: %s", c.RiemannURI)
+		return nil
+	}
 }
 
 // LoadConfiguration loads the configuration from the provided filepath

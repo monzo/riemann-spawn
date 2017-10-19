@@ -5,8 +5,7 @@ import riemanngo "github.com/riemann/riemann-go-client"
 // DefaultConfig : Defauly Config
 func DefaultConfig() Configuration {
 	return Configuration{
-		RiemannHost: "127.0.0.1",
-		RiemannPort: 5555,
+		RiemannURI: "tcp://127.0.0.1:5555",
 		Metrics: []MetricDefinition{
 			MetricDefinition{
 				Event: riemanngo.Event{

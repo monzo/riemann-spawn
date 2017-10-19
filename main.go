@@ -13,15 +13,6 @@ var (
 	configPath string // the path to the configuration file
 )
 
-func repeatMetricRequest(metric MetricDefinition) {
-	for {
-		go func(event riemanngo.Event) {
-			glog.Info(event)
-		}(metric.Event)
-		<-time.After(metric.repeatDuration())
-	}
-
-}
 func main() {
 	flag.StringVar(&configPath, "config", "", "configuration path")
 	flag.Parse()
@@ -33,8 +24,27 @@ func main() {
 		wg.Add(1)
 		go func(m MetricDefinition) {
 			defer wg.Done()
-			repeatMetricRequest(m)
+			repeatMetricRequest(m, config.GenerateClient())
 		}(metric)
 	}
 	wg.Wait()
+}
+
+func repeatMetricRequest(metric MetricDefinition, client riemanngo.Client) {
+	for {
+		go func(event riemanngo.Event) {
+			glog.Info(event)
+
+			err := client.Connect(5)
+			if err != nil {
+				glog.Errorf("%v", err)
+				return
+			}
+			defer client.Close()
+
+			riemanngo.SendEvent(client, &event)
+			return
+		}(metric.Event)
+		time.Sleep(metric.RepeatDuration())
+	}
 }
