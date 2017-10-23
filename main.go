@@ -42,7 +42,6 @@ func repeatMetricRequest(metric MetricDefinition, client riemanngo.Client) {
 				glog.Errorf("%v", err)
 				return
 			}
-			defer client.Close()
 
 			riemanngo.SendEvent(client, &event)
 			return
