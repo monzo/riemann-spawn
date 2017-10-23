@@ -12,18 +12,10 @@ help: ## This help.
 
 
 # DOCKER TASKS
-# Build the container
-compile: ## Compile a static binary suitable for the scratch docker container
-	go get
-	CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o riemann-spawn .
-
-dockerBuild: compile  ## Build the container
+dockerBuild: ## Build the container using an intermediary go build env
 	docker build \
 		-t $(APP_NAME):$(VERSION) \
 		-t $(APP_NAME) \
 		.
 
-clean: ## remove the binary any temp files
-	rm riemann-spawn
-
-build: compile dockerBuild clean
+build: dockerBuild
