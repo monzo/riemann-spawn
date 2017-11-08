@@ -5,6 +5,7 @@ import riemanngo "github.com/riemann/riemann-go-client"
 // DefaultConfig : Defauly Config
 func DefaultConfig() Configuration {
 	return Configuration{
+		Workers:    64,
 		RiemannURI: "tcp://127.0.0.1:5555",
 		Metrics: []MetricDefinition{
 			MetricDefinition{
@@ -14,16 +15,8 @@ func DefaultConfig() Configuration {
 					Metric:     1,
 					Attributes: map[string]string{"metric_type": "Counter"},
 				},
-				RatePerMinute: 60},
-
-			MetricDefinition{
-				Event: riemanngo.Event{
-					Service:    "ExampleGauge",
-					Host:       "ExampleHost",
-					Metric:     100.49,
-					Attributes: map[string]string{"metric_type": "Gauge"},
-				},
-				RatePerMinute: 10},
+				RatePerSecond: 100,
+			},
 		},
 	}
 }

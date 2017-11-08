@@ -19,3 +19,6 @@ dockerBuild: ## Build the container using an intermediary go build env
 		.
 
 build: dockerBuild
+
+go-build:
+	go build .

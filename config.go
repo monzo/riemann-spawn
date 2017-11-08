@@ -4,34 +4,35 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"time"
 
 	"net/url"
 
-	"github.com/golang/glog"
 	"github.com/riemann/riemann-go-client"
 )
 
 // MetricDefinition models a repeating metric
 type MetricDefinition struct {
-	Event         riemanngo.Event
-	RatePerMinute float64
+	Event         riemanngo.Event `json:"event"`
+	RatePerSecond float64         `json:"rate_per_second"`
 }
 
 func (m MetricDefinition) RepeatDuration() time.Duration {
-	return time.Duration(float64(time.Minute) / m.RatePerMinute)
+	return time.Duration(float64(time.Second) / m.RatePerSecond)
 }
 
 // Configuration Format
 type Configuration struct {
-	RiemannURI string
-	Metrics    []MetricDefinition
+	Workers    int                `json:"workers"`
+	RiemannURI string             `json:"riemann-uri"`
+	Metrics    []MetricDefinition `json:"metrics"`
 }
 
 func (c Configuration) GenerateClient() riemanngo.Client {
 	url, err := url.Parse(c.RiemannURI)
 	if err != nil {
-		glog.Fatalf("Couldn't parse RiemannURI: %s", c.RiemannURI)
+		log.Fatalf("Couldn't parse RiemannURI: %s", c.RiemannURI)
 	}
 	switch url.Scheme {
 	case "udp":
@@ -39,7 +40,7 @@ func (c Configuration) GenerateClient() riemanngo.Client {
 	case "tcp":
 		return riemanngo.NewTcpClient(fmt.Sprintf("%s:%s", url.Hostname(), url.Port()))
 	default:
-		glog.Fatalf("RiemannURI must be either tcp or udp schemed: %s", c.RiemannURI)
+		log.Fatalf("RiemannURI must be either tcp or udp schemed: %s", c.RiemannURI)
 		return nil
 	}
 }
@@ -61,11 +62,11 @@ func GetConfig(filepath string) Configuration {
 	if filepath != "" {
 		config, err := LoadConfiguration(filepath)
 		if err != nil {
-			glog.Fatalf("Couldn't Load Condifuration: %s", err)
+			log.Fatal("Couldn't Load Condifuration: %s", err)
 		}
-		glog.Infof("Processed Configuration From File: %s", filepath)
+		log.Printf("Processed Configuration From File: %s", filepath)
 		return config
 	}
-	glog.Warning("Using Default Configuration")
+	log.Printf("Using Default Configuration")
 	return DefaultConfig()
 }
